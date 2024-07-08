@@ -150,7 +150,7 @@ object FingerprintExtractor {
     private def getJSFingerprints(config: JCGConfig): Unit = {
         if (config.debug) println("[DEBUG] " + config.language + " " + config.inputDir + " " + config.outputDir)
         println("Extracting JS fingerprints")
-        val adapters = List(JSCallGraphAdapter)
+        val adapters = List(JSCallGraphAdapter, Code2flowCallGraphAdapter)
 
         // create output directories and execute all adapters
         val outputDir = config.outputDir
