@@ -174,7 +174,6 @@ object FingerprintExtractor {
 
         val outputWriter = new BufferedWriter(getOutputTarget(outputDir))
 
-
         // compare expected and generated call graphs and write results to file
         for (adapter <- adapters) {
             val algoDirs = listDirs(new File(adapterOutputDir, adapter.frameworkName))
@@ -187,18 +186,24 @@ object FingerprintExtractor {
                 var testCaseMap = Map[String, Boolean]()
                 outputWriter.write("\t" + algoDir.getName)
                 outputWriter.newLine()
+                // iterate through expected call graphs for algorithm and compare them
                 for (expectedCG <- expectedCGs) {
                     val testName: String = expectedCG.filePath.split("/").last
                     if (config.debug) println("[DEBUG] Test name: " + testName + " " + algoDir.getName)
-                    val generatedCGFile = algoDir.listFiles().find(_.getName == testName).get
-                    val generatedCG = new AdapterCG(generatedCGFile)
+                    val generatedCGFile = algoDir.listFiles().find(_.getName == testName).orNull
+                    // if callgraph file does not exist write None to result
+                    var soundSymbol = "None"
+                    if (generatedCGFile != null) {
+                        val generatedCG = new AdapterCG(generatedCGFile)
+                        // check if call graph has missing edges
+                        val isSound = compareCGs(expectedCG, generatedCG).length == 0
+                        testCaseMap += (testName.split("\\.").head -> isSound)
+                        soundSymbol = if (isSound) "Sound" else "Unsound"
+                    }
 
-                    // check if call graph has missing edges
-                    val isSound = compareCGs(expectedCG, generatedCG).length == 0
-                    testCaseMap += (testName.split("\\.").head -> isSound)
-
-                    outputWriter.write("\t\t" + testName + " -> " + isSound)
+                    outputWriter.write("\t\t" + testName + " -> " + soundSymbol)
                     outputWriter.flush()
+
                 }
                 algorithmMap += (algoDir.getName -> testCaseMap)
                 outputWriter.newLine()
