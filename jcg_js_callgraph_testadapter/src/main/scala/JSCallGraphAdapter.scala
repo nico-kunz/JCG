@@ -24,7 +24,8 @@ object JSCallGraphAdapter extends TestAdapter {
             sys.process.Process(Seq(command, "-h")).!!
         } catch {
             case e: Exception => {
-                println(s"[Error]: $command not found")
+                println(s"${Console.RED}[Error]: $command command not found, make sure it is installed and in your PATH${Console.RESET}")
+                return
             }
         }
 
