@@ -56,12 +56,12 @@ object TestCaseExtractorApp {
      */
     def main(args: Array[String]): Unit = {
         val userDir = System.getProperty("user.dir")
-        val outputDir = new File("testcasesOutput")
 
         // parse arguments
         val mdFilter = getArgumentValue(args, "--md").getOrElse("")
         val language = getArgumentValue(args, "--lang").getOrElse("all")
         val resourceDir = new File(getArgumentValue(args, "--rsrcDir").getOrElse(userDir))
+        val outputDir = new File(getArgumentValue(args, "--outDir").getOrElse("testcasesOutput"))
 
         val extractors = List[TestCaseExtractor](JavaTestExtractor, JSTestExtractor).filter(lang => language == "all" || language.contains(lang.language))
 
