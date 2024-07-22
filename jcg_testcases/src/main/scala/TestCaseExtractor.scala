@@ -95,7 +95,7 @@ object TestCaseExtractor {
             debug = true
         }
 
-        val extractors = List[TestCaseExtractor](JavaTestExtractor, JSTestExtractor).filter(lang => language == "all" || language.contains(lang.language))
+        val extractors = List[TestCaseExtractor](JavaTestExtractor, JSTestExtractor, PyTestExtractor).filter(lang => language == "all" || language.contains(lang.language))
 
         for (extractor <- extractors) {
             extractor.extract(resourceDir, outputDir, mdFilter)
