@@ -95,3 +95,36 @@ foo();
 baz();
 ```
 [//]: # (END)
+
+## ND4
+[//]: # (MAIN: global)
+Test the use of a nested function shadowing a global function.
+
+```json
+{
+  "directLinks": [
+    ["ND4.foo", "ND4.bar:11"],
+    ["ND4.foo", "ND4.bar:3"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// af/ND4.js
+
+function bar(x) {
+    return x;
+}
+
+function foo() {
+    function bar(x) {
+        return x + 1;
+    }
+    
+    bar();
+}
+
+foo();
+bar();
+```
+[//]: # (END)

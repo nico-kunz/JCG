@@ -195,3 +195,72 @@ const foo = require('./M7.js');
 foo(1);
 ```
 [//]: # (END)
+
+## M8
+[//]: # (MAIN: global)
+Test chained imports
+```json
+{
+  "directLinks": [
+    ["<global>", "One.first"],
+    ["One.first", "Two.second"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// modules/Main.js
+
+import { first } from './One.js';
+
+first();
+```
+```js
+// modules/One.js
+
+import { second } from './Two.js';
+
+export function first() {
+    second();
+}
+```
+```js
+// modules/Two.js
+
+export function second() {
+}
+```
+[//]: # (END)
+
+## M9
+[//]: # (MAIN: global)
+Test import all
+```json
+{
+  "directLinks": [
+    ["<global>", "M9.foo"],
+    ["<global>", "M9.bar"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// modules/M9.js
+
+export function foo(x) {
+    return x + 1;
+}
+
+export function bar(x) {
+    return x + 2;
+}
+```
+```js
+//modules/Main.js
+
+import * as myModule from './M9.js';
+
+myModule.foo(1);
+myModule.bar(2);
+```
+[//]: # (END)

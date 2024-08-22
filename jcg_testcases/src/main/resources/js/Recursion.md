@@ -28,3 +28,33 @@ function factorial(n) {
 factorial(5);
 ```
 [//]: # (END)
+
+## R2
+[//]: # (MAIN: global)
+Test the use of two functions that keep calling each other endlessly.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "R2.foo"],
+    ["R2.foo", "R2.bar"],
+    ["R2.bar", "R2.foo"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+
+// af/R2.js
+
+function foo() {
+    bar();
+}
+
+function bar(y) {
+    foo();
+}
+
+foo(10);
+```
+[//]: # (END)
