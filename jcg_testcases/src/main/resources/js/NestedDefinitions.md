@@ -128,3 +128,34 @@ foo();
 bar();
 ```
 [//]: # (END)
+
+## ND5
+[//]: # (MAIN: global)
+Test the use of closures
+
+```json
+{
+  "directLinks": [
+    ["<global>", "ND5.outerFunction"],
+    ["<global>", "ND5.innerFunction"] 
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// af/ND5.js
+
+function outerFunction() {
+    const x = 10;
+
+    function innerFunction() {
+        return x
+    }
+
+    return innerFunction;
+}
+
+const closure = outerFunction();
+closure();
+```
+[//]: # (END)
