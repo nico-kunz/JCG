@@ -7,7 +7,7 @@ ThisBuild / libraryDependencySchemes ++= Seq(
 )
 
 lazy val commonSettings = Seq(
-    scalaVersion := "2.13.8",
+    scalaVersion := "2.13.15",
     organization := "de.opal-project",
     homepage := Some(url("https://bitbucket.org/delors/jcg")),
     licenses := Seq("BSD-2-Clause" -> url("http://opensource.org/licenses/BSD-2-Clause")),
@@ -45,7 +45,7 @@ lazy val jcg_testcases = project.settings(
 lazy val jcg_annotation_matcher = project.settings(
     commonSettings,
     name := "JCG Annotation Matcher",
-    libraryDependencies += "de.opal-project" %% "bytecode-representation" % "5.0.1-SNAPSHOT",
+    libraryDependencies += "de.opal-project" %% "bytecode-representation" % "6.0.0",
     assembly / aggregate := false
 ).dependsOn(jcg_annotations, jcg_testadapter_commons)
 
@@ -92,7 +92,7 @@ lazy val jcg_soot_testadapter = project.settings(
 lazy val jcg_opal_testadapter = project.settings(
     commonSettings,
     name := "JCG OPAL Test Adapter",
-    libraryDependencies += "de.opal-project" %% "three-address-code" % "5.0.1-SNAPSHOT",
+    libraryDependencies += "de.opal-project" %% "three-address-code" % "6.0.0",
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.2",
     assembly / aggregate := false,
     publishArtifact := false
@@ -104,7 +104,7 @@ lazy val jcg_opal_testadapter = project.settings(
 lazy val jcg_doop_testadapter = project.settings(
     commonSettings,
     name := "JCG DOOP Test Adapter",
-    libraryDependencies += "de.opal-project" %% "bytecode-representation" % "5.0.1-SNAPSHOT",
+    libraryDependencies += "de.opal-project" %% "bytecode-representation" % "6.0.0",
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.2",
     libraryDependencies += "commons-io" % "commons-io" % "2.6",
     assembly / aggregate := false,
@@ -173,7 +173,7 @@ lazy val jcg_jarvis_testadapter = project.settings(
 lazy val jcg_dynamic_testadapter = project.settings(
     commonSettings,
     name := "JCG Dynamic Test Adapter",
-    libraryDependencies += "de.opal-project" %% "bytecode-representation" % "5.0.1-SNAPSHOT",
+    libraryDependencies += "de.opal-project" %% "bytecode-representation" % "6.0.0",
     assembly / aggregate := false,
     publishArtifact := false,
     Compile / compile := (Compile / compile).dependsOn(buildJVMTIAgent).value
@@ -199,7 +199,7 @@ lazy val jcg_evaluation = project.settings(
     resolvers += "soot snapshot" at "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-snapshot/",
     resolvers += "soot release" at "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/",
     resolvers += Resolver.mavenLocal,
-    libraryDependencies += "de.opal-project" %% "hermes" % "5.0.1-SNAPSHOT",
+    libraryDependencies += "de.opal-project" %% "hermes" % "6.0.0",
     publishArtifact := false
 ).dependsOn(
     jcg_testcases,
