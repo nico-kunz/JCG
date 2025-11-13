@@ -1,3 +1,5 @@
+import java.io.File
+import java.io.FileWriter
 import java.io.Writer
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.ibm.wala.cast.ir.ssa.AstIRFactory
 import com.ibm.wala.cast.js.ipa.callgraph.JSCallGraphUtil
 import com.ibm.wala.cast.js.translator.CAstRhinoTranslatorFactory
+import com.ibm.wala.cast.js.util.CallGraph2JSON
 import com.ibm.wala.cast.js.util.JSCallGraphBuilderUtil
 import com.ibm.wala.cast.js.util.JSCallGraphBuilderUtil.CGBuilderType
 import com.ibm.wala.classLoader.IMethod
@@ -26,11 +29,45 @@ object WalaJSJCGAdapter extends JSTestAdapter {
 
     val possibleAlgorithms: Array[String] = Array("1-CFA", "0-1-CFA")
 
-    val frameworkName: String = "WALA"
+    val frameworkName: String = "WALA-JS"
+
+    def main(args: Array[String]): Unit = serializeAllCGs("testcasesOutput/js", s"results/js/$frameworkName")
+
+    private def serializeAllCGs(inputDirPath: String, outputDirPath: String): Unit = {
+        for (algo <- possibleAlgorithms) {
+            generateCallGraphs(inputDirPath, outputDirPath, algo)
+        }
+    }
+
+    private def generateCallGraphs(inputDirPath: String, outputDirPath: String, algorithm: String): Unit = {
+        val outputDir = new File(s"$outputDirPath/$algorithm")
+        outputDir.mkdirs()
+        val testDirs = new File(inputDirPath).list().filter(x => new File(s"$inputDirPath/$x").isDirectory)
+        println("test_dirs:" ,testDirs.mkString(", "))
+
+        // generate callgraph for every testcase
+        testDirs.foreach(testDir => {
+            val output = new FileWriter(outputDir.getAbsolutePath + "/" + testDir + ".json")
+
+            println(new File(inputDirPath).getAbsolutePath)
+            val fileToParse = new File(s"$inputDirPath/$testDir").listFiles().last.getAbsolutePath
+            val file_arr = Array(fileToParse, outputDir.getAbsolutePath)
+            println(testDir)
+            println("THE FILE TO PROCESS IS: " + file_arr.head)
+            WalaConverter.main(file_arr)
+//            val firstFileDeep = new File(fileToParse).listFiles(_.getName.endsWith(".js")).head.getAbsolutePath
+//            println("Processing " + firstFileDeep + " ...")
+//            try serializeCG(algorithm, firstFileDeep, output) catch {
+//                case _: Throwable ⇒ println(s"Error processing $testDir")
+//            }
+            output.close()
+        })
+        println("Call graphs generated!")
+    }
 
     def serializeCG(
-        algorithm: String,
-        inputDirPath: String,
+        algorithm:      String,
+        inputDirPath:   String,
         output:         Writer,
         adapterOptions: AdapterOptions
     ): Long = {
@@ -51,16 +88,23 @@ object WalaJSJCGAdapter extends JSTestAdapter {
                 JSCallGraphBuilderUtil.getURLforFile(
                     "",
                     String.valueOf(filePath),
-                    classOf[JSCallGraphBuilderUtil].getClassLoader)
+                    classOf[JSCallGraphBuilderUtil].getClassLoader
                 )
+            )
         }.collect(Collectors.toList[SourceModule]).toArray(new Array[SourceModule](0))
 
         val before = System.nanoTime
         val cg: CallGraph = JSCallGraphBuilderUtil.makeScriptCG(scripts, builderType, irFactory)
         val after = System.nanoTime
 
-        //val initialEntryPoints = cg.getFakeRootNode.iterateCallSites().asScala.map(_.getDeclaredTarget)
+        // val initialEntryPoints = cg.getFakeRootNode.iterateCallSites().asScala.map(_.getDeclaredTarget)
         val initialEntryPoints = cg.getEntrypointNodes.asScala.map(_.getMethod.getReference)
+        val cg2json = new CallGraph2JSON()
+        println("CALLGRAPH.SERIALIZE: ")
+        println(cg2json.serialize(cg))
+        println("CALLGRAPH EXTRACTEDGES")
+        println(cg2json.extractEdges(cg))
+
 
         val worklist = mutable.Queue(initialEntryPoints.toSeq: _*)
         val processed = mutable.Set(worklist.toSeq: _*)
@@ -84,11 +128,12 @@ object WalaJSJCGAdapter extends JSTestAdapter {
 
                 if (currentMethodResolved != null) {
                     val declaredTarget = cs.getDeclaredTarget
-                    val line = try {
-                        currentMethodResolved.getLineNumber(cs.getProgramCounter)
-                    } catch {
-                        case _: ArrayIndexOutOfBoundsException ⇒ -1
-                    }
+                    val line =
+                        try {
+                            currentMethodResolved.getLineNumber(cs.getProgramCounter)
+                        } catch {
+                            case _: ArrayIndexOutOfBoundsException ⇒ -1
+                        }
                     val tgts = tgtsWala.map(createMethodObject).toSet
                     Some(CallSite(
                         createMethodObject(declaredTarget),
@@ -107,19 +152,18 @@ object WalaJSJCGAdapter extends JSTestAdapter {
 
         // Write to JSON using a stream to fix issues with CGs too large for memory
         val data = ReachableMethods(reachableMethods)
-        
+
         // using Jackson directly instead of play-json
         val factory = new JsonFactory()
         val generator = factory.createGenerator(output)
         generator.setPrettyPrinter(new DefaultPrettyPrinter())
-        
+
         new ObjectMapper()
             .registerModule(DefaultScalaModule)
             .writerWithDefaultPrettyPrinter()
             .writeValue(generator, data)
-        
-        generator.close()
 
+        generator.close()
 
         after - before
     }
@@ -137,7 +181,7 @@ object WalaJSJCGAdapter extends JSTestAdapter {
 
     private def toJVMString(typeReference: TypeReference): String =
         if (typeReference.isClassType || isArrayOfClassType(typeReference)) {
-            typeReference.getName.toString+";"
+            typeReference.getName.toString + ";"
         } else {
             typeReference.getName.toString
         }
