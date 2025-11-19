@@ -171,6 +171,7 @@
             return false;
         }
 
+
         private static String ppPos(AstMethod method, Position pos, String base_folder) {
             if (pos == null) {
                 return "unknown.js[unknown:1:1]";
@@ -189,9 +190,13 @@
                     funcName = retr.getEntity().getName();
                 }
             } else {
-                // fallback for safety
                 funcName = method.getName().toString();
-                funcName = "unknown";
+            }
+
+            // --- Clean up anonymous/auto-generated names ---
+            if (funcName == null || funcName.isEmpty() || funcName.equals("do") ||
+                    funcName.startsWith(file) || funcName.contains("@")) {
+                funcName = "anon";
             }
 
             Position posi = method.getSourcePosition();
@@ -199,7 +204,6 @@
                 posi = pos;
             }
 
-            // Example: foo.js[myFunc:foo.js:12:3]
             return String.format(
                     "%s[%s:%s:%d:%d]",
                     file,
@@ -209,6 +213,7 @@
                     posi.getFirstCol() + 2
             );
         }
+
 
 
         public static String toDotFormat(Map<String, Set<String>> map) {
