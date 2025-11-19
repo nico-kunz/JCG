@@ -40,7 +40,8 @@
             }
 
             String folder = args[0];
-            String outputFolder = args[1];
+            String outputFolder = args[0];
+            String outputFile = args[1];
 
             Writer wStat = new BufferedWriter(new FileWriter(new File(outputFolder + "/runtime_memory_stats.txt")));
 
@@ -80,7 +81,7 @@
                 CallGraph2JSON callGraph2JSON = new CallGraph2JSON();
                 String s = serialize(CG, folder);
 
-                try (Writer writer = new BufferedWriter(new FileWriter(new File(outputFolder + "/" + f.getName().replace(".js", ".cgtxt"))))) {
+                try (Writer writer = new BufferedWriter(new FileWriter(new File(outputFile)))) {
                     writer.write(s);
                 } catch (IOException e) {
                     e.printStackTrace();
