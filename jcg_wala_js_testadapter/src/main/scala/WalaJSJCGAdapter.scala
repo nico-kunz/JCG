@@ -3,7 +3,6 @@ import java.io.FileWriter
 import java.io.Writer
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.stream.Collectors
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 import upickle.default._
@@ -11,7 +10,7 @@ import upickle.default._
 
 object WalaJSJCGAdapter extends JSTestAdapter {
 
-    val possibleAlgorithms: Array[String] = Array("1-CFA", "0-1-CFA")
+    val possibleAlgorithms: Array[String] = Array("default")
 
     val frameworkName: String = "WALA-JS"
 
@@ -34,7 +33,7 @@ object WalaJSJCGAdapter extends JSTestAdapter {
             val output = new FileWriter(outputDir.getAbsolutePath + "/" + testDir + ".json")
 
             println(new File(inputDirPath).getAbsolutePath)
-            val fileToParse = new File(s"$inputDirPath/$testDir").listFiles().last.getAbsolutePath
+            val fileToParse = new File(s"$inputDirPath/$testDir").getAbsolutePath
             val file_arr = Array(fileToParse, outputDir.getAbsolutePath)
             println(testDir)
             println("THE FILE TO PROCESS IS: " + file_arr.head)
@@ -50,17 +49,22 @@ object WalaJSJCGAdapter extends JSTestAdapter {
                        output:         Writer,
                        adapterOptions: AdapterOptions
                    ): Long = {
+        val inputDir = new File(inputDirPath).listFiles().filter(_.isDirectory).last.getAbsolutePath
         val tempFile = new File(s"temp/$frameworkName/$algorithm/out.dot")
         tempFile.getParentFile.mkdirs()
         val start = System.currentTimeMillis()
-        WalaConverter.main(Array(inputDirPath, tempFile.getAbsolutePath))
+        WalaConverter.main(Array(inputDir, tempFile.getAbsolutePath))
         val end = System.currentTimeMillis()
         val json = toCommonFormat(tempFile)
         output.write(json)
+        tempFile.delete()
         end - start
     }
 
-    private def toCommonFormat(file: File) = {
+    private def toCommonFormat(file: File): String = {
+        if (!file.exists()) {
+            return ""
+        }
         val lines = Files.readAllLines(Paths.get(file.getAbsolutePath)).asScala.toList
         val nodeMap: mutable.Map[String, Node] = mutable.Map()
         val edgeArray: mutable.ListBuffer[Edge] = mutable.ListBuffer()
@@ -90,6 +94,10 @@ object WalaJSJCGAdapter extends JSTestAdapter {
         identifier = source_meta(0) // contains function name
 
         val start = source_meta(2).toInt
+
+        if(identifier == "anon" && start == 1) {
+            identifier = "global"
+        }
 
         Node(id = fileName + "::" + identifier,
             label = identifier,
