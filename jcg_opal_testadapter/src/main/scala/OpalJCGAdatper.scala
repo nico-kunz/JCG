@@ -2,21 +2,18 @@ import java.io.File
 import java.io.Writer
 import java.net.URL
 import scala.collection.JavaConverters._
-
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigValueFactory
-
 import org.opalj.br.DeclaredMethod
-import org.opalj.br.ObjectType
+import org.opalj.br.ClassType
 import org.opalj.br.analyses.DeclaredMethods
 import org.opalj.br.analyses.DeclaredMethodsKey
 import org.opalj.br.analyses.Project
 import org.opalj.br.analyses.Project.JavaClassFileReader
-import org.opalj.br.fpcf.PropertyStoreKey
+import org.opalj.br.fpcf.properties.cg.{Callees, NoCallees, NoCalleesDueToNotReachableMethod}
 import org.opalj.br.instructions.MethodInvocationInstruction
-import org.opalj.fpcf.FinalEP
-import org.opalj.fpcf.PropertyStore
+import org.opalj.fpcf.{FinalEP, PropertyStore, PropertyStoreKey}
 import org.opalj.tac.cg.AllocationSiteBasedPointsToCallGraphKey
 import org.opalj.tac.cg.CFA_1_0_CallGraphKey
 import org.opalj.tac.cg.CFA_1_1_CallGraphKey
@@ -29,9 +26,6 @@ import org.opalj.tac.cg.TypeBasedPointsToCallGraphKey
 import org.opalj.tac.cg.TypeIteratorKey
 import org.opalj.tac.cg.XTACallGraphKey
 import org.opalj.tac.fpcf.analyses.cg.TypeIterator
-import org.opalj.tac.fpcf.properties.cg.Callees
-import org.opalj.tac.fpcf.properties.cg.NoCallees
-import org.opalj.tac.fpcf.properties.cg.NoCalleesDueToNotReachableMethod
 
 /**
  * A [[JavaTestAdapter]] for the FPCF-based call graph analyses of OPAL.
@@ -204,9 +198,9 @@ object OpalJCGAdatper extends JavaTestAdapter {
                         val (dc, name, desc) = declaredTgtO.get
                         val declaredType =
                             if (dc.isArrayType)
-                                ObjectType.Object
+                                ClassType.Object
                             else
-                                dc.asObjectType
+                                dc.asClassType
 
                         val declaredTarget = declaredMethods(
                             declaredType, declaredType.packageName, declaredType, name, desc

@@ -3,7 +3,6 @@ import java.net.URL
 
 import org.opalj.br
 import org.opalj.br.Annotation
-import org.opalj.br.ObjectType
 import org.opalj.br.analyses.Project
 import org.opalj.br.analyses.SomeProject
 
