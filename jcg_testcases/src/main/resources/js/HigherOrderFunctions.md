@@ -92,7 +92,7 @@ Test reassignment of a function to a variable
 ```json
 {
   "directLinks": [
-    ["<global>", "HOF4.bar"],
+    ["<global>", "HOF4.bar"]
   ],
   "indirectLinks": []
 }
@@ -111,5 +111,56 @@ function bar(x) {
 var f = foo;
 var f = bar;
 f(1);
+```
+[//]: # (END)
+
+## HOF5
+[//]: # (MAIN: global)
+Test reassignment of a function to a variable and then use as argument
+
+```json
+{
+  "directLinks": [
+    ["<global>", "HOF5.foo"],
+    ["HOF5.foo", "HOF5.bar"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// af/HOF5.js
+function foo(func) {
+    func(1)
+}
+function bar(x) {
+    return x;
+}
+var f = bar;
+foo(f);
+```
+[//]: # (END)
+
+## HOF6
+[//]: # (MAIN: global)
+Test call to function as default parameter.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "HOF6.foo"],
+    ["HOF6.foo", "HOF6.bar"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// af/HOF6.js
+function bar(x) {
+    return x;
+}
+function foo(f = bar) {
+    f(1);
+}
+foo();
 ```
 [//]: # (END)

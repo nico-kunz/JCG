@@ -180,3 +180,87 @@ f, g = bar, foo
 g()
 ```
 [//]: # (END)
+
+## HOF8
+[//]: # (MAIN: global)
+Test reassignment of a function to a variable and then use as argument
+```json
+{
+  "directLinks": [
+    ["<global>", "HOF8.foo"],
+    ["HOF8.foo", "HOF8.bar"]
+  ],
+  "indirectLinks": []
+}
+```
+```python
+# hof/HOF8.py
+
+def foo(func):
+    func(1)
+    
+def bar(x):
+    return x
+    
+f = bar
+foo(f)
+```
+[//]: # (END)
+
+## HOF9
+[//]: # (MAIN: global)
+Test call to function as default parameter.
+```json
+{
+  "directLinks": [
+    ["<global>", "HOF9.foo"],
+    ["HOF9.foo", "HOF9.bar"]
+  ],
+  "indirectLinks": []
+}
+```
+```python
+# hof/HOF9.py
+
+def bar(x):
+    return x
+
+def foo(f = bar):
+    f(1)
+
+foo()
+```
+[//]: # (END)
+
+## HOF10
+[//]: # (MAIN: global)
+Test assignment to starred variable.
+```json
+{
+  "directLinks": [
+    ["<global>", "HOF10.func2"],
+    ["<global>", "HOF10.func3"]
+  ],
+  "indirectLinks": []
+}
+```
+```python
+# hof/HOF10.py
+def func1():
+    pass
+
+def func2():
+    pass
+
+def func3():
+    pass
+
+def func4():
+    pass
+
+a, *b, c = func1, func2, func3, func4
+
+b[0]()
+b[1]()
+```
+[//]: # (END)

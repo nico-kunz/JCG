@@ -211,3 +211,89 @@ class Bar extends Foo {
 const f = new Bar(1, 2);
 ```
 [//]: # (END)
+
+## C7
+[//]: # (MAIN: global)
+Test class constructor taking function and initializing member with the function. Then call the function via the member.
+
+```json
+{
+  "directLinks": [],
+  "indirectLinks": ["C7.bar"]
+}
+```
+```js
+// classes/C7.js
+
+class Foo {
+    constructor(f) {
+        this.f = f;
+    }
+
+    callF(x) {
+        return this.f(x);
+    }
+}
+function bar(x) {
+    return x + 1;
+}
+
+const f = new Foo(bar);
+f.callF(1);
+```
+[//]: # (END)
+
+## C8
+[//]: # (MAIN: global)
+Test class taking default parameter for constructor.
+
+```json
+{
+  "directLinks": [],
+  "indirectLinks": ["C8.bar"]
+}
+```
+```js
+// classes/C8.js
+function bar(x) {
+    return x + 1;
+}
+class Foo {
+    constructor(f = bar) {
+        this.f = f;
+    }
+
+    callF(x) {
+        return this.f(x);
+    }
+}
+const f = new Foo();
+f.callF(1);
+```
+[//]: # (END)
+
+## C9
+[//]: # (MAIN: global)
+Test error class being thrown.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "C9.constructor"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// classes/C9.js
+
+class CustomError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "CustomError";
+    }
+}
+
+throw new CustomError("This is a custom error");
+```
+[//]: # (END)

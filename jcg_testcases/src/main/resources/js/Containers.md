@@ -152,3 +152,85 @@ f.push(bar);
 f.pop()();
 ```
 [//]: # (END)
+
+## CO6
+[//]: # (MAIN: global)
+Test call to function in nested array.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "CO6.foo"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// co/CO6.js
+
+function bar() {
+    return 1;
+}
+function foo() {
+    return 2;
+}
+var f = [[bar, foo]];
+f[0][1]();
+```
+[//]: # (END)
+
+## CO7
+[//]: # (MAIN: global)
+Test call to function that calls array with index passed as parameter.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "CO7.foo"],
+    ["CO7.foo", "CO7.bar"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// co/CO7.js
+
+function bar() {
+    return 1;
+}
+function foo(i) {
+    var f = [bar, foo];
+    f[i]();
+}
+foo(0);
+```
+[//]: # (END)
+
+## CO8
+[//]: # (MAIN: global)
+Test call to function in object set with object.assign.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "CO8.foo"]
+  ],
+  "indirectLinks": []
+}
+```
+```js
+// co/CO8.js
+
+function bar() {
+    return 1;
+}
+function foo() {
+    return 2;
+}
+
+var d = { "a": bar };
+
+Object.assign(d, { "a": foo });
+d["a"]();
+```
+[//]: # (END)

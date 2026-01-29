@@ -224,3 +224,57 @@ class Bar(Foo):
 b = Bar()
 ```
 [//]: # (END)
+
+## C9
+[//]: # (MAIN: global)
+Test call to function assigned to class variable in constructor.
+```json
+{
+  "directLinks": [
+    ["<global>", "C9.__init__"],
+    ["<global>", "C9.call_helper"],
+    ["C9.call_helper", "C9.helper"]
+  ],
+  "indirectLinks": []
+}
+```
+```python
+# classes/C9.py
+
+def helper(x):
+    return x + 1
+
+class Foo:
+    def __init__(self):
+        self.f = helper
+    
+    def call_helper(self, x):
+        return self.f(x)
+
+f = Foo()
+f.call_helper(2)
+```
+[//]: # (END)
+
+## C10
+[//]: # (MAIN: global)
+Test exception class constructor being called when raising an exception.
+
+```json
+{
+  "directLinks": [
+    ["<global>", "C10.__init__"]
+  ],
+  "indirectLinks": []
+}
+```
+```python
+# classes/C10.py
+
+class A(Exception):
+    def __init__(self):
+        pass
+
+raise A
+```
+[//]: # (END)
