@@ -1,5 +1,4 @@
 FROM openjdk:24-ea-slim-bullseye
-LABEL authors="nicokunz"
 
 # Install required tools (npm, pip, git)
 RUN apt-get update && apt-get install -y \
