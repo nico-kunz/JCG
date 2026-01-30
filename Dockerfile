@@ -52,8 +52,12 @@ RUN coursier install sbt && \
 
 # Create working directory and copy application files
 WORKDIR /app
-COPY . /app
+#COPY . /app
+RUN git clone https://github.com/opalj/JCG.git /app
+RUN cd /app && git checkout feature/WALA-JS-nico
 
+RUN rm -f /app/tajs.properties
+RUN rm -f /app/adapters.properties
 RUN echo "tajs = /usr/local/bin/tajs-all.jar" >> /app/tajs.properties
 RUN echo "jarvis = /usr/local/bin/jarvis/Jarvis/tool/Jarvis/jarvis_cli.py" >> /app/adapters.properties
 
